@@ -12,3 +12,9 @@ class scrapperprofileAdmin(admin.ModelAdmin):
 
     list_display = [
         'profilelink', "uploaded_at" ,"scrapped_status","added_by"]
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+
+    list_display = [
+        'Name', "Linkedin_Email" ,"Address"]
