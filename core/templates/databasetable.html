@@ -43,10 +43,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form  method="POST" action="https://5a2b-103-10-31-102.ngrok.io/scrapperpost" enctype="multipart/form-data">
+                <form  method="POST" action="https://7ce0-103-75-49-4.ngrok.io/scrapperpost" enctype="multipart/form-data">
                 {% csrf_token %}
                  {% comment %} {% crispy taskform %} {% endcomment %}
                  {{ taskform|crispy }}
+                 
                 <input  class="btn btn-secondary" type="submit" value="Submit">
                 </form>
             </div>
