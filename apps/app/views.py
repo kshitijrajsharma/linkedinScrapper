@@ -27,6 +27,27 @@ def index(request):
     html_template = loader.get_template('index.html')
     return HttpResponse(html_template.render(context, request))
 
+@login_required(login_url="/login/")
+def databasetable(request):
+    context = {}
+
+    # try:
+    profiledata=scrapperprofile.objects.all()
+    context = {'profiledata': profiledata}
+
+    html_template = loader.get_template('databasetable.html')
+    return HttpResponse(html_template.render(context, request))
+    # except template.TemplateDoesNotExist:
+
+    #     html_template = loader.get_template('page-404.html')
+    #     return HttpResponse(html_template.render(context, request))
+
+    # except:
+    #     html_template = loader.get_template('page-500.html')
+    #     return HttpResponse(html_template.render(context, request))
+
+
+
 
 @login_required(login_url="/login/")
 def pages(request):
@@ -80,104 +101,115 @@ def scrapperapi(request,id):
     elementID.send_keys(password)
     #Note: replace the keys "username" and "password" with your LinkedIn login info
     elementID.submit()
+
+    # Main scrapping 
+    
     urltoscrap="https://www.linkedin.com/in/"+url
-    print(urltoscrap)
+    #This is for contact
+    contact=urltoscrap
+    print(contact)
+    
     browser.get(urltoscrap)
-    #Scroll to the end of the page
+
+    time.sleep(5)#sleep_between_interactions
+    
     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(5)#sleep_between_interactions
-    browser.find_element_by_class_name("pv-skills-section__additional-skills").click()
-
+   
+    browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
+    time.sleep(5)
+    browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    try:
+        browser.find_element_by_class_name("pv-skills-section__additional-skills").click()
+    except:
+        pass
     src = browser.page_source
     soup = BeautifulSoup(src, 'html.parser')
-    table = soup.find_all(id='experience-section')
-    #experience=soup.find("div", {"id": "experience-section"})
-    #print(find_all_id)
-    print("*******Experiences **********")
-    experiencetopush=""
-    for x in table:
-        for y in x.findAll('h3'):
-            print (y.text)
-            experiencetopush=experiencetopush+"\n"+y.text
-        for y in x.findAll('span'):
-            print (y.text)
-            experiencetopush=experiencetopush+"\n"+y.text
-
-    print("\n")
-    scrapper.Experience=experiencetopush
-    scrapper.save()
-
-
-    print("*******Education **********")
-
-
-
     education = soup.find_all(id='education-section')
-    educationtopush=""
 
-    #experience=soup.find("div", {"id": "experience-section"})
-    #print(find_all_id)
+    
+    profile = soup.find_all(class_ ="pv-text-details__left-panel mr5")
+    currentpost = soup.find_all(class_ ="text-body-medium break-words")
+  
+    
+    for x in currentpost:
+        profilepost=x.text
+    profilepost=profilepost.strip()
+    newlist=profilepost.split()
+    profilepost=" ".join(newlist)
+ 
+    print(profilepost)
+    
+    Experience_post=""
+    for x in profile:
+        for y in x.findAll('h1'):
+            name=y.text
+        
+        count=0
+        for y in x.findAll('span'):
+       
+            if(count==3):
+                location=y.text
+            count=count+1
+        
+    print(name)
+    name=name.strip()
+    location=location.strip()
+    newlist=location.split()
+    location=" ".join(newlist)
+    print(location)
+    
 
+    Education_text=""
+#     print(education)
     for x in education:
         for y in x.findAll('h3'):
-            print (y.text)
-            educationtopush=educationtopush+"\n"+y.text
-        for y in x.findAll('span'):
-            print (y.text)
-            educationtopush=educationtopush+"\n"+y.text
-
-    scrapper.Education=educationtopush
-    scrapper.save()
-
-
-
-    print("*******Skills & endorsements **********")
-
-
-    #Skills = soup.find_all("div", {"class": "pv-profile-section pv-skill-categories-section artdeco-card mt4 p5 ember-view"})
-    skills = soup.find_all(class_ ="pv-profile-section pv-skill-categories-section artdeco-card mt4 p5 ember-view")
-    skillstring=""
-    #experience=soup.find("div", {"id": "experience-section"})
-    #print(skills)
-
+            #print (y.text)
+            Education_text=Education_text+y.text+","
+        count=0
+        for y in x.findAll('p'):
+            if (count==0):
+                #print (y.text)
+                Education_text=Education_text+y.text+","
+    Education_text=Education_text.strip()
+    newlist=Education_text.split()
+    Education_text=" ".join(newlist)
+    print(Education_text)
+    
+    
+    skills = soup.find_all(class_ ="pv-skill-category-entity__name-text t-16 t-black t-bold")
+    count=0
+    skillstext=""
+   # print(skills)
     for x in skills:
+        count=count+1
+        x.text.strip()
+        skillstext=skillstext+x.text+","
+            
+    skillstext=skillstext.strip()
+    newlist=skillstext.split()
+    skillstext=" ".join(newlist)
+    print(skillstext)
     
-        for y in x.findAll('span'):
-            print (y.text)
-            skillstring=skillstring+"\n"+y.text
-    print("\n")
-    scrapper.Skills=skillstring
-    scrapper.save()
+    interests = soup.find_all(class_ ="pv-entity__summary-title-text")
+    intereststext=""
+    for x in interests:
+        intereststext=intereststext+x.text+","
+    intereststext=intereststext.strip()
+    newlist=intereststext.split()
+    intereststext=" ".join(newlist)
+    print(intereststext)
+    data = [contact, name, location, profilepost,Education_text,skillstext,intereststext]
+    print(data)
+    scrapper.Contact=contact
+    scrapper.name=name
+    scrapper.location=location
+    scrapper.Education=Education_text
+    scrapper.Skills=skillstext
+    scrapper.Interest=intereststext
+    scrapper.Description=profilepost
+    scrapper.scrapped_status=True
 
-    print("*******Accomplishmets **********")
-
-    accomplishmets = soup.find_all(class_ ="pv-profile-section pv-accomplishments-section artdeco-card mv4 ember-view")
-    accomplishmetstopush=""
-    #experience=soup.find("div", {"id": "experience-section"})
-    #print(skills)
-
-    for x in accomplishmets:
-    
-        for y in x.findAll('li'):
-            print (y.text)
-            accomplishmetstopush=accomplishmetstopush+"\n"+y.text
-    print("\n")
-    print("*******Interests **********")
-    scrapper.Accomplishments=accomplishmetstopush
-    scrapper.save()
-
-    Interests = soup.find_all(class_ ="pv-profile-section pv-interests-section artdeco-card mt4 p5 ember-view")
-    Intereststopush=""
-    #experience=soup.find("div", {"id": "experience-section"})
-    #print(skills)
-
-    for x in Interests:
-    
-        for y in x.findAll('li'):
-            print (y.text)
-            Intereststopush=Intereststopush+"\n"+y.text
-    
-    scrapper.Interest=Intereststopush
     scrapper.save()
     return Response(ScrapperprofileSerializer(scrapperprofile.objects.filter(id=id), context={"request": request}, many=True).data)
 

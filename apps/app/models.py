@@ -36,17 +36,18 @@ def set_password(self, raw_password):
     hsh = get_hexdigest(algo, salt, raw_password)
     self.password = '%s$%s$%s' % (algo, salt, hsh)
 class scrapperprofile(models.Model):
+    Contact = models.TextField(null=True,blank=True)
+    name= models.TextField(null=True,blank=True)
+    location= models.TextField(null=True,blank=True)
+    Education= models.TextField(null=True,blank=True)
+    Skills = models.TextField(null=True,blank=True)
+    Interest = models.TextField(null=True,blank=True)
+    Description = models.TextField(null=True,blank=True)
+
     profilelink= models.CharField(max_length=200)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     scrapped_status = models.BooleanField(default=False)
-    
-    Interest = models.TextField(null=True,blank=True)
-    Accomplishments = models.TextField(null=True,blank=True)
-    Skills = models.TextField(null=True,blank=True)
-    Education= models.TextField(null=True,blank=True)
-    Experience = models.TextField(null=True,blank=True)
-    Contact = models.TextField(null=True,blank=True)
-    Description = models.TextField(null=True,blank=True)
+
 
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)

@@ -11,6 +11,11 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
+    path('databasetable', views.databasetable, name='databasetable'),
+    
+
+    
+
     path("api/scrapper/<int:id>", views.scrapperapi),
     path("api/allprofiles",views.scrapperprofileview),
 
