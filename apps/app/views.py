@@ -53,16 +53,9 @@ def dashboard(request):
 def databasetable(request):
     
     userid=request.user.id
-    # userprofile = Profile.objects.get_or_create(user=int(userid))
-    # context = {"profile":userprofile}
-    # try:
     profiledata=scrapperprofile.objects.all()
-
     usernewprofile=Profile.objects.filter(user=userid)
-
     context = {'profile': usernewprofile,'profiledata': profiledata,'taskform':scrapperprofileForm}
-
-
     html_template = loader.get_template('databasetable.html')
     return HttpResponse(html_template.render(context, request))
     # except template.TemplateDoesNotExist:
@@ -134,6 +127,18 @@ def scrapperpost(request):
             return HttpResponseRedirect("/")
         else:
             print(postForm.errors)
+@login_required(login_url="/login/")
+def delete(request,id):
+    instance=scrapperprofile.objects.get(id=id)
+    instance.delete()
+    
+    userid=request.user.id
+    profiledata=scrapperprofile.objects.all()
+    usernewprofile=Profile.objects.filter(user=userid)
+    context = {'profile': usernewprofile,'profiledata': profiledata,'taskform':scrapperprofileForm}
+    html_template = loader.get_template('databasetable.html')
+    return HttpResponse(html_template.render(context, request))
+        
 
 
 
@@ -218,7 +223,7 @@ def scrapperapi(request,id):
         profile = soup.find_all(class_ ="pv-text-details__left-panel mr5")
         currentpost = soup.find_all(class_ ="text-body-medium break-words")
     
-        
+        profilepost=""
         for x in currentpost:
             profilepost=x.text
         profilepost=profilepost.strip()
@@ -228,6 +233,8 @@ def scrapperapi(request,id):
         print(profilepost)
         
         Experience_post=""
+        location=""
+        
         for x in profile:
             for y in x.findAll('h1'):
                 name=y.text

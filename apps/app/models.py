@@ -45,7 +45,7 @@ class scrapperprofile(models.Model):
     Interest = models.TextField(null=True,blank=True)
     Description = models.TextField(null=True,blank=True)
 
-    profilelink= models.CharField(max_length=200)
+    profilelink= models.CharField(max_length=200,unique=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     scrapped_status = models.BooleanField(default=False)
 

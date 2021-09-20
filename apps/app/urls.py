@@ -16,6 +16,8 @@ urlpatterns = [
     path('databasetable', views.databasetable, name='databasetable'),
     path('tableview', views.tableview, name='tableview'),
     path('scrapperpost', views.scrapperpost, name='scrapperpost'),
+    path('delete/<int:id>', views.delete, name='delete'),
+
 
     path('profilesetting/<slug:pk>/', views.PersonUpdateView.as_view(), name='profilesetting'),
 
