@@ -39,3 +39,26 @@
 
 <!-- Volt JS -->
 <script src="/static/assets/js/volt.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="/static/assets/js/FileSaver.min.js"></script>
+
+<script src="/static/assets/js/xlsx.core.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/5.2.0/js/tableexport.min.js" integrity="sha512-XmZS54be9JGMZjf+zk61JZaLZyjTRgs41JLSmx5QlIP5F+sSGIyzD2eJyxD4K6kGGr7AsVhaitzZ2WTfzpsQzg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+$('#exportbutton').on('click', function(event) {
+    console.log("button clicked");
+  $('#datatable').tableExport({type:'csv'});
+  
+ // $('#datatable').tableExport({type:'excel'});
+});
+
+
+$("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#datatable tbody").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+</script>

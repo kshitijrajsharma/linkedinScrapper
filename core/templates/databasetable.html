@@ -1,9 +1,10 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Transactions {% endblock %} 
+{% block title %} Database {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -25,17 +26,37 @@
           <p class="mb-0">Your web scrapping dashboard</p>
       </div>
       <div class="btn-toolbar mb-2 mb-md-0">
-          <a href="#" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
-              <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-              New Profile
-          </a>
+
           <div class="btn-group ms-2 ms-lg-3">
-              <button type="button" class="btn btn-sm btn-outline-gray-600">Share</button>
-              <button type="button" class="btn btn-sm btn-outline-gray-600">Export</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-default">New Task</button>
+
+             
+              <button type="button" id="exportbutton" class="btn btn-sm btn-outline-gray-600">Export</button>
           </div>
       </div>
   </div>
-  
+  <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="h6 modal-title">Add New Profile to Scrap</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form  method="POST" action="http://127.0.0.1:8000/scrapperpost" enctype="multipart/form-data">
+                {% csrf_token %}
+                 {% comment %} {% crispy taskform %} {% endcomment %}
+                 {{ taskform|crispy }}
+                <input  class="btn btn-secondary" type="submit" value="Submit">
+                </form>
+            </div>
+            <div class="modal-footer">
+               
+                <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
   <div class="table-settings mb-4">
       <div class="row align-items-center justify-content-between">
           <div class="col col-md-6 col-lg-3 col-xl-4">
@@ -45,7 +66,7 @@
                           <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                       </svg>
                   </span>
-                  <input type="text" class="form-control" placeholder="Search profiles">
+                  <input type="text" id="myInput" class="form-control" placeholder="Search profiles">
               </div>
           </div>
           <div class="col-4 col-md-2 col-xl-1 ps-md-0 text-end">
@@ -66,7 +87,7 @@
   </div>
   
   <div class="card card-body border-0 shadow table-wrapper table-responsive">
-      <table class="table table-hover">
+      <table id="datatable" class="table table-hover">
           <thead>
               <tr>
                   <th class="border-gray-200">Id</th>
@@ -90,29 +111,28 @@
                   <td>
                       <span class="fw-normal">{{data.profilelink}}</span>
                   </td>
-                  <td><span class="fw-normal">None</span></td>                        
+                  <td><span class="fw-normal">{{data.name}}</span></td>                        
                   <td><span class="fw-normal">{{data.uploaded_at}}</span></td>
                   <td><span class="fw-bold">{{data.added_by}}</span></td>
                   <td><span class="fw-bold text-warning">{{data.scrapped_status}}</span></td>
                   <td>
                       <div class="btn-group">
-                          <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <a class="btn btn-block btn-secondary" href="/api/scrapper/{{data.id}}" >Scrap</a>
+                          {% comment %} <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span class="icon icon-sm">
                                   <span class="fas fa-ellipsis-h icon-dark"></span>
                               </span>
                               <span class="visually-visible">Select Action</span>
                           </button>
                           <div class="dropdown-menu py-0">
-            
-                          {% if data.scrapped_status == 'True' %}
-                              <a class="dropdown-item rounded-top" href="#"><span class="fas fa-eye me-2"></span>View Details</a>
+                          {% if data.scrapped_status == True %}
+                              <a class="dropdown-item rounded-top" href="/api/scrapper/{{data.id}}"><span class="fas fa-eye me-2"></span>View Details</a>
                               {% else %}
                               <a class="dropdown-item rounded-top" href="/api/scrapper/{{data.id}}"><span class="fas fa-eye me-2"></span>Scrape</a>
-
                               {% endif %}
                               <a class="dropdown-item" href="#"><span class="fas fa-edit me-2"></span>Edit</a>
                               <a class="dropdown-item text-danger rounded-bottom" href="#"><span class="fas fa-trash-alt me-2"></span>Remove</a>
-                          </div>
+                          </div> {% endcomment %}
                       </div>
                   </td>
               </tr>
@@ -149,6 +169,7 @@
           <div class="fw-normal small mt-4 mt-lg-0">Showing <b>5</b> out of <b>25</b> entries</div>
       </div>
   </div>
+
 
 {% endblock content %}
 

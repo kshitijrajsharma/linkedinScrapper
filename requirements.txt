@@ -13,3 +13,4 @@ whitenoise==5.3.0
 selenium
 beautifulsoup4
 djangorestframework
+django-crispy-forms
